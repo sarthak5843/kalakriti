@@ -1,0 +1,25 @@
+# Node.js
+**/node_modules/
+**/dist/
+**/.env
+**/.env.local
+
+# Maven / Java
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+
+# IDEs
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Local uploads and media storage
+**/uploads/
+**/token.txt

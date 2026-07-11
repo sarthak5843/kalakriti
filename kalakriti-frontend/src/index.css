@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Nunito:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-primary: #6B2D8B;
+  --color-primary-dark: #4A1F68;
+  --color-pink: #E91E8C;
+  --color-gold: #C9A84C;
+  --color-cream: #FEFAF4;
+  --color-navy: #2D1B69;
+  --color-muted: #7B6B8B;
+  --font-script: 'Great Vibes', cursive;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Nunito', sans-serif;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: #FEFAF4; color: #2D1B69; }
+  h1, h2, h3, h4 { font-family: var(--font-heading); }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-[#6B2D8B] text-white px-7 py-3 rounded-full font-semibold text-sm tracking-wide hover:bg-[#4A1F68] transition-all duration-300 shadow-md hover:shadow-lg;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 border-2 border-[#6B2D8B] text-[#6B2D8B] px-7 py-3 rounded-full font-semibold text-sm tracking-wide hover:bg-[#6B2D8B] hover:text-white transition-all duration-300;
+  }
+  .btn-pink {
+    @apply inline-flex items-center justify-center gap-2 bg-[#E91E8C] text-white px-7 py-3 rounded-full font-semibold text-sm tracking-wide hover:bg-[#C4186F] transition-all duration-300 shadow-md;
+  }
+  .btn-outline-white {
+    @apply inline-flex items-center justify-center gap-2 border-2 border-white text-white px-7 py-3 rounded-full font-semibold text-sm tracking-wide hover:bg-white hover:text-[#6B2D8B] transition-all duration-300;
+  }
+
+  /* Typography */
+  .section-tag {
+    font-family: var(--font-script);
+    @apply text-[#E91E8C] text-xl block mb-1;
+  }
+  .section-title {
+    font-family: var(--font-heading);
+    @apply text-3xl md:text-4xl font-bold text-[#2D1B69] leading-tight;
+  }
+  .gold-rule {
+    @apply flex items-center gap-3 my-4;
+  }
+  .gold-rule::before, .gold-rule::after {
+    content: '';
+    @apply flex-1 h-px bg-[#C9A84C] opacity-60;
+  }
+
+  /* Cards */
+  .art-card {
+    @apply bg-white rounded-2xl overflow-hidden shadow-sm border border-[#EDE0F8] hover:shadow-xl hover:border-[#C9A84C] transition-all duration-300;
+  }
+
+  /* Form */
+  .input-field {
+    @apply w-full border border-[#D4B8E8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#6B2D8B] focus:border-transparent bg-white text-[#2D1B69] placeholder-[#B0A0C0] transition-all;
+  }
+
+  /* Watercolor corner blobs — pure CSS, no emojis */
+  .wc-tl {
+    position: absolute; top: 0; left: 0; width: 380px; height: 380px; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at top left,
+      rgba(233,30,140,0.20) 0%, rgba(107,45,139,0.16) 30%,
+      rgba(180,130,210,0.08) 55%, transparent 72%);
+  }
+  .wc-tr {
+    position: absolute; top: 0; right: 0; width: 380px; height: 380px; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at top right,
+      rgba(107,45,139,0.20) 0%, rgba(233,30,140,0.14) 30%,
+      rgba(180,130,210,0.08) 55%, transparent 72%);
+  }
+  .wc-bl {
+    position: absolute; bottom: 0; left: 0; width: 300px; height: 300px; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at bottom left,
+      rgba(233,30,140,0.16) 0%, rgba(107,45,139,0.10) 40%, transparent 68%);
+  }
+  .wc-br {
+    position: absolute; bottom: 0; right: 0; width: 300px; height: 300px; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse at bottom right,
+      rgba(107,45,139,0.16) 0%, rgba(233,30,140,0.10) 40%, transparent 68%);
+  }
+
+  /* Gold dot accent */
+  .gold-dot {
+    position: absolute; border-radius: 50%; background: #C9A84C; opacity: 0.35; pointer-events: none; z-index: 0;
+  }
+}
