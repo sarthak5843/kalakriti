@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Calendar, MapPin, Users } from 'lucide-react'
+import { Calendar, MapPin, Users, X, CreditCard } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { eventService } from '../services/services'
+import { eventService, siteService } from '../services/services'
 import { useAuth } from '../context/AuthContext'
 
 export default function EventDetail() {
@@ -11,17 +11,44 @@ export default function EventDetail() {
   const { isLoggedIn } = useAuth()
   const [event, setEvent] = useState(null)
   const [booking, setBooking] = useState(false)
+  const [settings, setSettings] = useState(null)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [transactionId, setTransactionId] = useState('')
 
   useEffect(() => {
     eventService.getById(id).then(r => setEvent(r.data)).catch(() => navigate('/events'))
+    siteService.get().then(res => setSettings(res.data)).catch(() => {})
   }, [id])
 
   const handleBook = async () => {
     if (!isLoggedIn) { navigate('/login'); return }
+    if (event.paid && event.price > 0) {
+      setShowPaymentModal(true)
+    } else {
+      setBooking(true)
+      try {
+        await eventService.book(id)
+        toast.success('Successfully registered for this event! Awaiting admin approval.')
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Booking failed')
+      } finally {
+        setBooking(false)
+      }
+    }
+  }
+
+  const submitBookingWithPayment = async (e) => {
+    e.preventDefault()
+    if (!transactionId.trim()) {
+      toast.error('Please enter the transaction reference ID')
+      return
+    }
     setBooking(true)
     try {
-      await eventService.book(id)
-      toast.success('Successfully registered for this event!')
+      await eventService.book(id, transactionId)
+      toast.success('Registration request submitted! Awaiting admin approval.')
+      setShowPaymentModal(false)
+      setTransactionId('')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Booking failed')
     } finally {
@@ -68,6 +95,76 @@ export default function EventDetail() {
           {booking ? 'Registering...' : event.availableSeats === 0 ? 'Fully Booked' : isLoggedIn ? 'Register for This Event' : 'Login to Register'}
         </button>
       </div>
+
+      {/* Payment / Booking Request Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-[#FEFAF4] rounded-2xl w-full max-w-md p-6 border border-[#EDE0F8] shadow-2xl relative">
+            <button onClick={() => setShowPaymentModal(false)} className="absolute top-4 right-4 text-[#7A5C4A] hover:text-[#2D1B69]">
+              <X size={20} />
+            </button>
+
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-full bg-[#EDE0F8] flex items-center justify-center text-[#6B2D8B]">
+                <CreditCard size={20} />
+              </div>
+              <div>
+                <h3 className="font-bold text-[#2D1B69]">Event Registration Fee</h3>
+                <p className="text-xs text-[#7B6B8B]">Pay to secure your seat</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-4 border border-[#EDE0F8] mb-6 text-center">
+              <p className="text-[#7B6B8B] text-xs font-semibold uppercase tracking-wider">Amount to Pay</p>
+              <p className="text-3xl font-extrabold text-[#6B2D8B] mt-1">₹{event.price?.toLocaleString()}</p>
+              <p className="text-xs text-gray-500 mt-1">For Event: {event.title}</p>
+            </div>
+
+            <form onSubmit={submitBookingWithPayment} className="space-y-5">
+              {/* QR Code */}
+              <div className="flex flex-col items-center justify-center">
+                <div className="w-48 h-48 border-2 border-purple-100 rounded-xl overflow-hidden bg-white p-2 flex items-center justify-center shadow-inner">
+                  {settings?.qrCodeUrl ? (
+                    <img src={settings.qrCodeUrl} alt="UPI QR Code" className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="text-center p-4">
+                      <p className="text-[#6B2D8B] font-bold text-sm">UPI Payment</p>
+                      <p className="text-xs text-[#7B6B8B] mt-1">Please pay to standard studio phone number/UPI ID:</p>
+                      <p className="text-xs font-bold text-[#2D1B69] mt-1">{settings?.phone || '+918197344421'}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Transaction ID Input */}
+              <div>
+                <label className="block text-xs font-bold text-[#2D1B69] uppercase tracking-wider mb-2">Transaction ID / UPI Ref No. *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 348910485912"
+                  className="input-field text-center font-mono tracking-widest text-lg font-bold"
+                  value={transactionId}
+                  onChange={e => setTransactionId(e.target.value)}
+                />
+                <p className="text-[10px] text-[#7B6B8B] mt-1.5 text-center">
+                  Once payment is completed, paste the 12-digit transaction reference ID above and submit. Admin will verify and confirm your seat.
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setShowPaymentModal(false)} className="flex-1 btn-secondary py-2.5">
+                  Cancel
+                </button>
+                <button type="submit" disabled={booking} className="flex-1 btn-primary py-2.5 disabled:opacity-60">
+                  {booking ? 'Submitting...' : 'Submit Payment'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

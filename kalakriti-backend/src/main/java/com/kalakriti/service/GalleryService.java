@@ -52,11 +52,22 @@ public class GalleryService {
     }
 
     public GalleryImage uploadImage(GalleryDTO.ImageRequest request, MultipartFile file) throws IOException {
-        Map result = cloudinaryService.upload(file, "gallery");
+        String url = null;
+        String publicId = null;
+
+        if (file != null && !file.isEmpty()) {
+            Map result = cloudinaryService.upload(file, "gallery");
+            url = (String) result.get("secure_url");
+            publicId = (String) result.get("public_id");
+        } else if (request.getImageUrl() != null && !request.getImageUrl().trim().isEmpty()) {
+            url = request.getImageUrl().trim();
+        } else {
+            throw new IllegalArgumentException("Either an image file or a valid image URL is required");
+        }
 
         GalleryImage image = new GalleryImage();
-        image.setImageUrl((String) result.get("secure_url"));
-        image.setPublicId((String) result.get("public_id"));
+        image.setImageUrl(url);
+        image.setPublicId(publicId);
         image.setTitle(request.getTitle());
         image.setArtistName(request.getArtistName());
         image.setArtworkType(request.getArtworkType());

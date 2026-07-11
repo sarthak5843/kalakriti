@@ -19,6 +19,7 @@ public class GalleryDTO {
         private String artistName;
         private ArtworkType artworkType;
         private Long categoryId;
+        private String imageUrl;
 
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
@@ -28,5 +29,7 @@ public class GalleryDTO {
         public void setArtworkType(ArtworkType artworkType) { this.artworkType = artworkType; }
         public Long getCategoryId() { return categoryId; }
         public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
+        public String getImageUrl() { return imageUrl; }
+        public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     }
 }

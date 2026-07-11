@@ -14,6 +14,7 @@ export default function AdminGallery() {
   const [catDesc, setCatDesc] = useState('')
   const [imgForm, setImgForm] = useState({ title: '', artistName: '', artworkType: 'STUDENT', categoryId: '' })
   const [file, setFile] = useState(null)
+  const [imageUrl, setImageUrl] = useState('')
   const [loading, setLoading] = useState(false)
 
   const loadCats = () => adminService.getGalleryCategories().then(r => setCategories(r.data || [])).catch(() => {})
@@ -42,20 +43,23 @@ export default function AdminGallery() {
 
   const handleUpload = async (e) => {
     e.preventDefault()
-    if (!file) { toast.error('Please select an image'); return }
+    if (!file && !imageUrl) { toast.error('Please select an image or enter a URL'); return }
     setLoading(true)
     try {
       const fd = new FormData()
-      fd.append('file', file)
+      if (file) {
+        fd.append('file', file)
+      }
       fd.append('data', new Blob([JSON.stringify({
         title: imgForm.title,
         artistName: imgForm.artistName,
         artworkType: imgForm.artworkType,
-        categoryId: imgForm.categoryId || null
+        categoryId: imgForm.categoryId || null,
+        imageUrl: file ? null : imageUrl
       })], { type: 'application/json' }))
       await adminService.uploadImage(fd)
       toast.success('Image uploaded!')
-      setImgModal(false); setFile(null); setImgForm({ title: '', artistName: '', artworkType: 'STUDENT', categoryId: '' })
+      setImgModal(false); setFile(null); setImageUrl(''); setImgForm({ title: '', artistName: '', artworkType: 'STUDENT', categoryId: '' })
       loadImages(selectedCat)
     } catch { toast.error('Upload failed') } finally { setLoading(false) }
   }
@@ -143,13 +147,17 @@ export default function AdminGallery() {
           <div className="bg-white rounded-2xl w-full max-w-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-bold text-[#2D1B69]">Upload Artwork</h3>
-              <button onClick={() => setImgModal(false)}><X size={20} className="text-[#7A5C4A]" /></button>
+              <button onClick={() => { setImgModal(false); setFile(null); setImageUrl('') }}><X size={20} className="text-[#7A5C4A]" /></button>
             </div>
             <form onSubmit={handleUpload} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-[#2D1B69] mb-1">Image File *</label>
-                <input type="file" accept="image/*" required onChange={e => setFile(e.target.files[0])}
+                <label className="block text-sm font-medium text-[#2D1B69] mb-1">Image File</label>
+                <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])}
                   className="w-full border border-purple-200 rounded-lg px-3 py-2 text-sm text-[#2D1B69]" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#2D1B69] mb-1">Or Image URL (e.g. Unsplash URL)</label>
+                <input className="input-field" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://images.unsplash.com/..." />
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#2D1B69] mb-1">Title</label>
@@ -177,7 +185,7 @@ export default function AdminGallery() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button type="button" onClick={() => setImgModal(false)} className="flex-1 btn-secondary">Cancel</button>
+                <button type="button" onClick={() => { setImgModal(false); setFile(null); setImageUrl('') }} className="flex-1 btn-secondary">Cancel</button>
                 <button type="submit" disabled={loading} className="flex-1 btn-primary disabled:opacity-60">{loading ? 'Uploading...' : 'Upload'}</button>
               </div>
             </form>

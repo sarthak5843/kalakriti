@@ -11,14 +11,24 @@ public class DatabaseInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
-    public DatabaseInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DatabaseInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                               org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public void run(String... args) throws Exception {
+        try {
+            jdbcTemplate.execute("ALTER TABLE event_bookings MODIFY COLUMN status VARCHAR(255)");
+            System.out.println("Upgraded event_bookings status column to VARCHAR(255)");
+        } catch (Exception e) {
+            System.out.println("Could not alter event_bookings status column: " + e.getMessage());
+        }
+
         if (!userRepository.existsByEmail("admin@kalakriti.com")) {
             User admin = new User();
             admin.setFullName("Kalakriti Admin");

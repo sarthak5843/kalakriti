@@ -126,6 +126,17 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/events/bookings")
+    public ResponseEntity<List<EventBooking>> getAllEventBookings() {
+        return ResponseEntity.ok(eventService.getAllBookings());
+    }
+
+    @PutMapping("/events/bookings/{id}/status")
+    public ResponseEntity<EventBooking> updateEventBookingStatus(@PathVariable Long id,
+                                                                 @RequestParam String status) {
+        return ResponseEntity.ok(eventService.updateBookingStatus(id, status));
+    }
+
     // ── GALLERY ──────────────────────────────────────────────
     @PostMapping("/gallery/categories")
     public ResponseEntity<GalleryCategory> createCategory(@RequestBody GalleryDTO.CategoryRequest request) {
@@ -140,7 +151,7 @@ public class AdminController {
 
     @PostMapping("/gallery/images")
     public ResponseEntity<GalleryImage> uploadImage(@RequestPart("data") GalleryDTO.ImageRequest request,
-                                                    @RequestPart("file") MultipartFile file) throws IOException {
+                                                    @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
         return ResponseEntity.ok(galleryService.uploadImage(request, file));
     }
 

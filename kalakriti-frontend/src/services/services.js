@@ -18,7 +18,7 @@ export const courseService = {
 export const eventService = {
   getAll: () => api.get('/events'),
   getById: (id) => api.get(`/events/${id}`),
-  book: (eventId) => api.post(`/events/${eventId}/book`),
+  book: (eventId, paymentId) => api.post(`/events/${eventId}/book`, null, { params: { paymentId } }),
   myBookings: () => api.get('/events/my-bookings'),
 }
 
@@ -66,6 +66,9 @@ export const adminService = {
   createEvent: (data) => api.post('/admin/events', data),
   updateEvent: (id, data) => api.put(`/admin/events/${id}`, data),
   deleteEvent: (id) => api.delete(`/admin/events/${id}`),
+  getEventBookings: () => api.get('/admin/events/bookings'),
+  approveEventBooking: (id) => api.put(`/admin/events/bookings/${id}/status`, null, { params: { status: 'CONFIRMED' } }),
+  rejectEventBooking: (id) => api.put(`/admin/events/bookings/${id}/status`, null, { params: { status: 'REJECTED' } }),
 
   // Gallery
   getGalleryCategories: () => api.get('/gallery/categories'),

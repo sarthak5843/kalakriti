@@ -29,8 +29,10 @@ public class EventController {
     }
 
     @PostMapping("/{id}/book")
-    public ResponseEntity<EventBooking> bookEvent(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.bookEvent(id));
+    public ResponseEntity<EventBooking> bookEvent(
+            @PathVariable Long id,
+            @RequestParam(required = false) String paymentId) {
+        return ResponseEntity.ok(eventService.bookEvent(id, paymentId));
     }
 
     @GetMapping("/my-bookings")

@@ -22,7 +22,7 @@ public class EventBooking {
     private Event event;
 
     @Enumerated(EnumType.STRING)
-    private BookingStatus status = BookingStatus.CONFIRMED;
+    private BookingStatus status = BookingStatus.PENDING;
 
     private String paymentId;
     private String paymentStatus;
@@ -30,7 +30,7 @@ public class EventBooking {
     @Column(updatable = false)
     private LocalDateTime bookedAt = LocalDateTime.now();
 
-    public enum BookingStatus { CONFIRMED, CANCELLED }
+    public enum BookingStatus { PENDING, CONFIRMED, REJECTED, CANCELLED }
 
     public Long getId() { return id; }
     public User getUser() { return user; }

@@ -83,13 +83,16 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public EventBooking bookEvent(Long eventId) {
+    public EventBooking bookEvent(Long eventId, String paymentId) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (bookingRepository.existsByUserIdAndEventId(user.getId(), eventId)) {
-            throw new BadRequestException("Already booked this event");
+        if (bookingRepository.existsByUserIdAndEventIdAndStatusIn(
+                user.getId(),
+                eventId,
+                List.of(EventBooking.BookingStatus.PENDING, EventBooking.BookingStatus.CONFIRMED))) {
+            throw new BadRequestException("Already registered or requested registration for this event");
         }
 
         Event event = getEventById(eventId);
@@ -100,11 +103,52 @@ public class EventService {
         EventBooking booking = new EventBooking();
         booking.setUser(user);
         booking.setEvent(event);
+        booking.setPaymentId(paymentId);
+        booking.setPaymentStatus(paymentId != null ? "PENDING" : "UNPAID");
+        booking.setStatus(EventBooking.BookingStatus.PENDING);
 
-        if (event.getAvailableSeats() != null) {
-            event.setAvailableSeats(event.getAvailableSeats() - 1);
-            eventRepository.save(event);
+        return bookingRepository.save(booking);
+    }
+
+    public List<EventBooking> getAllBookings() {
+        return bookingRepository.findAll();
+    }
+
+    public EventBooking updateBookingStatus(Long bookingId, String status) {
+        EventBooking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        EventBooking.BookingStatus newStatus = EventBooking.BookingStatus.valueOf(status.toUpperCase());
+        
+        // Deduct seats *only* when changing status to CONFIRMED
+        if (newStatus == EventBooking.BookingStatus.CONFIRMED && booking.getStatus() != EventBooking.BookingStatus.CONFIRMED) {
+            Event event = booking.getEvent();
+            if (event.getAvailableSeats() != null) {
+                if (event.getAvailableSeats() <= 0) {
+                    throw new BadRequestException("No seats available for this event");
+                }
+                event.setAvailableSeats(event.getAvailableSeats() - 1);
+                eventRepository.save(event);
+            }
         }
+        
+        // Revert seats if previous status was CONFIRMED and new status is cancelled/rejected
+        if (booking.getStatus() == EventBooking.BookingStatus.CONFIRMED && 
+            (newStatus == EventBooking.BookingStatus.CANCELLED || newStatus == EventBooking.BookingStatus.REJECTED)) {
+            Event event = booking.getEvent();
+            if (event.getAvailableSeats() != null) {
+                event.setAvailableSeats(event.getAvailableSeats() + 1);
+                eventRepository.save(event);
+            }
+        }
+
+        booking.setStatus(newStatus);
+        if (newStatus == EventBooking.BookingStatus.CONFIRMED) {
+            booking.setPaymentStatus("PAID");
+        } else if (newStatus == EventBooking.BookingStatus.REJECTED) {
+            booking.setPaymentStatus("REJECTED");
+        }
+        
         return bookingRepository.save(booking);
     }
 

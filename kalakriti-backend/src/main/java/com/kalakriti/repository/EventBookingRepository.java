@@ -7,4 +7,6 @@ import java.util.List;
 public interface EventBookingRepository extends JpaRepository<EventBooking, Long> {
     List<EventBooking> findByUserId(Long userId);
     boolean existsByUserIdAndEventId(Long userId, Long eventId);
+    boolean existsByUserIdAndEventIdAndStatusIn(Long userId, Long eventId, List<EventBooking.BookingStatus> statuses);
+    List<EventBooking> findByStatus(EventBooking.BookingStatus status);
 }

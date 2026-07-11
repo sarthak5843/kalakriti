@@ -8,6 +8,7 @@ const navItems = [
   { to: '/admin/courses', icon: BookOpen, label: 'Courses' },
   { to: '/admin/enrollments', icon: Users, label: 'Enrollments' },
   { to: '/admin/events', icon: Calendar, label: 'Events' },
+  { to: '/admin/event-bookings', icon: Users, label: 'Event Bookings' },
   { to: '/admin/gallery', icon: Image, label: 'Gallery' },
   { to: '/admin/testimonials', icon: MessageSquare, label: 'Testimonials' },
   { to: '/admin/contacts', icon: Mail, label: 'Contacts' },

@@ -23,3 +23,6 @@
 # Local uploads and media storage
 **/uploads/
 **/token.txt
+
+.vercel
+.env*
