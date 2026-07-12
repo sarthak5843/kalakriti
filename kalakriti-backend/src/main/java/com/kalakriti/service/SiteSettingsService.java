@@ -36,6 +36,11 @@ public class SiteSettingsService {
         settings.setFacebookUrl(updated.getFacebookUrl());
         settings.setYoutubeUrl(updated.getYoutubeUrl());
         settings.setAboutText(updated.getAboutText());
+        settings.setInstructorName(updated.getInstructorName());
+        settings.setInstructorBio(updated.getInstructorBio());
+        settings.setAboutImageUrl(updated.getAboutImageUrl());
+        settings.setInstructorImageUrl(updated.getInstructorImageUrl());
+        settings.setInstructorImages(updated.getInstructorImages());
         return settingsRepository.save(settings);
     }
 

@@ -45,10 +45,10 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-white shadow-lg shadow-purple-100/50' : 'bg-white/95 backdrop-blur-sm'
+      scrolled ? 'bg-[#FCFAF7]/95 shadow-md border-b border-[#EBE3D5]/55 backdrop-blur-md' : 'bg-[#FCFAF7]/80 backdrop-blur-sm'
     }`}>
       {/* Top gold accent line */}
-      <div className="h-1 bg-gradient-to-r from-[#E91E8C] via-[#C9A84C] to-[#7B2D8B]" />
+      <div className="h-1 bg-gradient-to-r from-[#E0B3B7] via-[#D4B26F] to-[#704A87]" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 md:h-20">
@@ -70,8 +70,8 @@ export default function Navbar() {
                 to={link.to}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                   isActive(link.to)
-                    ? 'text-white bg-[#7B2D8B]'
-                    : 'text-[#1a1a4e] hover:text-[#7B2D8B] hover:bg-[#E8D5F5]'
+                    ? 'text-white bg-[#704A87] shadow-sm'
+                    : 'text-[#3E3431] hover:text-[#704A87] hover:bg-[#F2EAE0]'
                 }`}
               >
                 {link.label}
@@ -83,20 +83,20 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-2 text-[#7B2D8B] hover:text-[#5A1F68] text-sm font-semibold transition-colors">
+                <Link to="/dashboard" className="flex items-center gap-2 text-[#704A87] hover:text-[#54316B] text-sm font-semibold transition-colors">
                   <LayoutDashboard size={16} />
                   <span>{user?.name?.split(' ')[0]}</span>
                 </Link>
-                <button onClick={handleLogout} className="flex items-center gap-1 text-[#6B5B7B] hover:text-[#E91E8C] text-sm transition-colors">
+                <button onClick={handleLogout} className="flex items-center gap-1 text-[#8F8082] hover:text-[#E0B3B7] text-sm cursor-pointer transition-colors">
                   <LogOut size={16} />
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="text-[#1a1a4e] hover:text-[#7B2D8B] text-sm font-semibold transition-colors">
+                <Link to="/login" className="text-[#3E3431] hover:text-[#704A87] text-sm font-semibold transition-colors">
                   Login
                 </Link>
-                <Link to="/register" className="btn-pink text-sm py-2 px-5">
+                <Link to="/register" className="btn-pink text-sm py-2 px-5 font-bold">
                   Register
                 </Link>
               </>
@@ -105,7 +105,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden text-[#7B2D8B] hover:text-[#E91E8C] transition-colors"
+            className="md:hidden text-[#704A87] hover:text-[#E0B3B7] transition-colors"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -115,34 +115,34 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-[#E8D5F5] px-4 py-4 space-y-1 shadow-lg">
+        <div className="md:hidden bg-[#FCFAF7] border-t border-[#EBE3D5] px-4 py-4 space-y-1 shadow-lg">
           {navLinks.map(link => (
             <Link
               key={link.to}
               to={link.to}
               className={`block px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                 isActive(link.to)
-                  ? 'text-white bg-[#7B2D8B]'
-                  : 'text-[#1a1a4e] hover:text-[#7B2D8B] hover:bg-[#E8D5F5]'
+                  ? 'text-white bg-[#704A87]'
+                  : 'text-[#3E3431] hover:text-[#704A87] hover:bg-[#F2EAE0]'
               }`}
             >
               {link.label}
             </Link>
           ))}
-          <div className="pt-3 border-t border-[#E8D5F5] flex flex-col gap-2">
+          <div className="pt-3 border-t border-[#EBE3D5] flex flex-col gap-2">
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" className="flex items-center gap-2 px-4 py-3 text-[#7B2D8B] text-sm font-semibold">
+                <Link to="/dashboard" className="flex items-center gap-2 px-4 py-3 text-[#704A87] text-sm font-semibold">
                   <LayoutDashboard size={16} /> My Dashboard
                 </Link>
-                <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-3 text-[#6B5B7B] text-sm">
+                <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-3 text-[#8F8082] text-sm text-left">
                   <LogOut size={16} /> Logout
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="block px-4 py-3 text-[#1a1a4e] text-sm font-semibold">Login</Link>
-                <Link to="/register" className="block px-4 py-3 bg-[#E91E8C] text-white rounded-xl text-sm font-semibold text-center">Register</Link>
+                <Link to="/login" className="block px-4 py-3 text-[#3E3431] text-sm font-semibold">Login</Link>
+                <Link to="/register" className="block px-4 py-3 bg-[#E0B3B7] text-[#3E3431] rounded-xl text-sm font-bold text-center">Register</Link>
               </>
             )}
           </div>

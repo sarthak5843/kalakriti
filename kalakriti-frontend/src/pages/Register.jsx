@@ -28,26 +28,26 @@ export default function Register() {
   }
 
   return (
-    <div className="pt-16 md:pt-20 min-h-screen flex">
+    <div className="pt-16 md:pt-20 min-h-screen flex bg-[#FCFAF7]">
 
-      {/* Left — Indian art illustration panel */}
+      {/* Left — Art illustration panel */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=85"
-          alt="Indian art"
+          src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=85"
+          alt="Art supplies"
           className="w-full h-full object-cover"
           style={{ filter: 'brightness(0.45) saturate(0.75)' }}
         />
         <div className="absolute inset-0"
-          style={{ background: 'linear-gradient(160deg, rgba(233,30,140,0.40) 0%, rgba(107,45,139,0.75) 50%, rgba(45,27,105,0.85) 100%)' }} />
+          style={{ background: 'linear-gradient(160deg, rgba(112,74,135,0.80) 0%, rgba(62,52,49,0.85) 100%)' }} />
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
-          <img src="/logo.png" alt="Kalakriti" className="w-40 h-40 object-contain drop-shadow-2xl mb-6" />
+          <img src="/logo.png" alt="Kalakriti" className="w-40 h-40 object-contain drop-shadow-2xl mb-6 border-4 border-white/20 rounded-full p-2 bg-white/10 backdrop-blur-sm" />
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-[#C9A84C]" />
-            <div className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]" />
-            <div className="h-px w-12 bg-[#C9A84C]" />
+            <div className="h-px w-12 bg-[#D4B26F]" />
+            <div className="w-1.5 h-1.5 rounded-full bg-[#D4B26F]" />
+            <div className="h-px w-12 bg-[#D4B26F]" />
           </div>
-          <p className="text-white/80 text-base leading-relaxed italic"
+          <p className="text-white/80 text-base leading-relaxed italic font-medium"
             style={{ fontFamily: "'Playfair Display', serif" }}>
             Begin your creative journey with Bangalore's most beloved art studio
           </p>
@@ -55,55 +55,56 @@ export default function Register() {
       </div>
 
       {/* Right — Register form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 relative overflow-hidden" style={{ background: '#FEFAF4' }}>
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-16 relative overflow-hidden bg-[#FCFAF7]">
+        <div className="absolute inset-0 bg-mandala opacity-15 pointer-events-none" />
         <div className="wc-tl" style={{ width: 300, height: 300 }} />
         <div className="wc-br" style={{ width: 300, height: 300 }} />
 
         <div className="relative z-10 w-full max-w-md">
           <div className="text-center mb-8">
-            <div className="w-14 h-14 rounded-full bg-[#EDE0F8] flex items-center justify-center mx-auto mb-4">
-              <UserPlus size={24} className="text-[#6B2D8B]" />
+            <div className="w-14 h-14 rounded-full bg-[#704A87]/10 flex items-center justify-center mx-auto mb-4 border border-[#704A87]/15">
+              <UserPlus size={24} className="text-[#704A87]" />
             </div>
-            <span className="section-tag">Join Us</span>
-            <h1 className="section-title text-3xl">Create Account</h1>
+            <span className="section-tag text-[#D4B26F]">Join Us</span>
+            <h1 className="section-title text-3xl text-[#3E3431]">Create Account</h1>
             <div className="flex items-center justify-center gap-3 my-3">
-              <div className="h-px w-12 bg-[#C9A84C]" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#C9A84C]" />
-              <div className="h-px w-12 bg-[#C9A84C]" />
+              <div className="h-px w-12 bg-[#D4B26F] opacity-45" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#D4B26F]" />
+              <div className="h-px w-12 bg-[#D4B26F] opacity-45" />
             </div>
-            <p className="text-[#7B6B8B] text-sm">Start your art journey with Kalakriti</p>
+            <p className="text-[#5C504E] text-sm font-semibold">Start your art journey with Kalakriti</p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-8 border border-[#EDE0F8]">
+          <div className="bg-white rounded-2xl shadow-lg p-8 border border-[#EBE3D5]">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-[#2D1B69] mb-1">Full Name *</label>
+                <label className="block text-sm font-semibold text-[#3E3431] mb-1">Full Name *</label>
                 <input className="input-field" placeholder="Your full name" required
                   value={form.fullName} onChange={e => setForm({ ...form, fullName: e.target.value })} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#2D1B69] mb-1">Email Address *</label>
+                <label className="block text-sm font-semibold text-[#3E3431] mb-1">Email Address *</label>
                 <input type="email" className="input-field" placeholder="your@email.com" required
                   value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#2D1B69] mb-1">Phone Number</label>
+                <label className="block text-sm font-semibold text-[#3E3431] mb-1">Phone Number</label>
                 <input className="input-field" placeholder="+91 XXXXX XXXXX"
                   value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#2D1B69] mb-1">Password *</label>
+                <label className="block text-sm font-semibold text-[#3E3431] mb-1">Password *</label>
                 <input type="password" className="input-field" placeholder="Min. 6 characters" required minLength={6}
                   value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} />
               </div>
               <button type="submit" disabled={loading}
-                className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 text-base py-3">
+                className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-60 text-base py-3 cursor-pointer">
                 {loading ? 'Creating account...' : 'Create Account'}
               </button>
             </form>
-            <p className="text-center text-sm text-[#7B6B8B] mt-6">
+            <p className="text-center text-sm text-[#5C504E] mt-6 font-semibold">
               Already have an account?{' '}
-              <Link to="/login" className="text-[#6B2D8B] font-bold hover:text-[#E91E8C] transition-colors">Sign in</Link>
+              <Link to="/login" className="text-[#704A87] font-bold hover:text-[#D4B26F] transition-colors">Sign in</Link>
             </p>
           </div>
         </div>

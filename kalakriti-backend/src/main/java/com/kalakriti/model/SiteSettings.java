@@ -26,6 +26,17 @@ public class SiteSettings {
     @Column(columnDefinition = "TEXT")
     private String aboutText;
 
+    private String instructorName;
+
+    @Column(columnDefinition = "TEXT")
+    private String instructorBio;
+
+    private String aboutImageUrl;
+    private String instructorImageUrl;
+
+    @Column(columnDefinition = "TEXT")
+    private String instructorImages;
+
     public Long getId() { return id; }
     public String getLogoUrl() { return logoUrl; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
@@ -53,4 +64,14 @@ public class SiteSettings {
     public void setYoutubeUrl(String youtubeUrl) { this.youtubeUrl = youtubeUrl; }
     public String getAboutText() { return aboutText; }
     public void setAboutText(String aboutText) { this.aboutText = aboutText; }
+    public String getInstructorName() { return instructorName; }
+    public void setInstructorName(String instructorName) { this.instructorName = instructorName; }
+    public String getInstructorBio() { return instructorBio; }
+    public void setInstructorBio(String instructorBio) { this.instructorBio = instructorBio; }
+    public String getAboutImageUrl() { return aboutImageUrl; }
+    public void setAboutImageUrl(String aboutImageUrl) { this.aboutImageUrl = aboutImageUrl; }
+    public String getInstructorImageUrl() { return instructorImageUrl; }
+    public void setInstructorImageUrl(String instructorImageUrl) { this.instructorImageUrl = instructorImageUrl; }
+    public String getInstructorImages() { return instructorImages; }
+    public void setInstructorImages(String instructorImages) { this.instructorImages = instructorImages; }
 }
