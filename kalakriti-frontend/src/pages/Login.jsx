@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { authService } from '../services/services'
 import { useAuth } from '../context/AuthContext'
@@ -9,6 +9,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = async e => {
     e.preventDefault()
@@ -18,7 +19,7 @@ export default function Login() {
       const userData = { name: res.data.fullName, email: res.data.email, role: res.data.role }
       login(userData, res.data.token)
       toast.success(`Welcome back, ${res.data.fullName}!`)
-      window.location.href = res.data.role === 'ADMIN' ? '/admin' : '/dashboard'
+      navigate(res.data.role === 'ADMIN' ? '/admin' : '/dashboard')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid credentials')
     } finally {

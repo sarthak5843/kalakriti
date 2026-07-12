@@ -9,6 +9,7 @@ export default function AdminLogin() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [loading, setLoading] = useState(false)
   const { login } = useAuth()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -21,7 +22,7 @@ export default function AdminLogin() {
       }
       login({ name: res.data.fullName, email: res.data.email, role: res.data.role }, res.data.token)
       toast.success('Welcome, Admin!')
-      window.location.href = '/admin'
+      navigate('/admin')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Invalid credentials')
     } finally {
