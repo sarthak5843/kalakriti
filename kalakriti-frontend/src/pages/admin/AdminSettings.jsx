@@ -31,6 +31,7 @@ export default function AdminSettings() {
   const [qrLoading, setQrLoading] = useState(false)
   const [photoUploading, setPhotoUploading] = useState(false)
   const [artUploading, setArtUploading] = useState(false)
+  const [aboutImgUploading, setAboutImgUploading] = useState(false)
 
   useEffect(() => {
     siteService.get().then(r => {
@@ -89,6 +90,21 @@ export default function AdminSettings() {
       toast.success('UPI QR Code updated!')
       setQrFile(null)
     } catch { toast.error('QR Code upload failed') } finally { setQrLoading(false) }
+  }
+
+  const handleAboutImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setAboutImgUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'about')
+      const res = await adminService.uploadFile(fd)
+      setSettings(prev => ({ ...prev, aboutImageUrl: res.data }))
+      toast.success('Studio image uploaded!')
+    } catch { toast.error('Upload failed. Please try again.') }
+    finally { setAboutImgUploading(false); e.target.value = '' }
   }
 
   const handleInstructorPhotoUpload = async (e) => {
@@ -238,13 +254,19 @@ export default function AdminSettings() {
                 <textarea className="input-field" rows={4} value={settings.aboutText} onChange={e => setSettings({ ...settings, aboutText: e.target.value })} placeholder="Tell the story of how Kalakriti Art Studio was founded..." />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-1">Studio Main Image URL (About Section)</label>
-                <input className="input-field" value={settings.aboutImageUrl} onChange={e => setSettings({ ...settings, aboutImageUrl: e.target.value })} placeholder="e.g. https://images.unsplash.com/..." />
-                {settings.aboutImageUrl && (
-                  <div className="mt-2 h-24 rounded-lg overflow-hidden border border-[#EBE3D5] bg-[#FCFAF7] p-1">
-                    <img src={settings.aboutImageUrl} alt="Studio Preview" className="w-full h-full object-cover rounded-md" onError={e => { e.target.style.display = 'none' }} />
-                  </div>
-                )}
+                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-2">Studio Main Image (About Section)</label>
+                <div className="flex items-center gap-3">
+                  {settings.aboutImageUrl && (
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-[#EBE3D5] shrink-0">
+                      <img src={settings.aboutImageUrl} alt="Studio" className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none' }} />
+                    </div>
+                  )}
+                  <label className={`flex-1 flex items-center gap-2 justify-center py-2.5 px-4 rounded-xl border-2 border-dashed border-[#704A87]/40 text-[#704A87] font-semibold text-sm cursor-pointer hover:bg-[#704A87]/5 transition-colors ${aboutImgUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                    <Upload size={15} />
+                    {aboutImgUploading ? 'Uploading...' : settings.aboutImageUrl ? 'Change Image' : 'Choose Image from Device'}
+                    <input type="file" accept="image/*" className="hidden" onChange={handleAboutImageUpload} disabled={aboutImgUploading} />
+                  </label>
+                </div>
               </div>
               <div className="border-t border-[#EBE3D5]/40 pt-4">
                 <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-1">Instructor Name</label>

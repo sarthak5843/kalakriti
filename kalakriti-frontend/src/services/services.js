@@ -102,4 +102,7 @@ export const adminService = {
   uploadInstructorPhoto: (formData) => api.post('/admin/settings/instructor-photo', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  uploadFile: (formData) => api.post('/admin/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 }

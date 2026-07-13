@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Plus, Pencil, Trash2, X, Upload, Image, Calendar, MapPin } from 'lucide-react'
 import toast from 'react-hot-toast'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService, eventService } from '../../services/services'
@@ -12,6 +12,8 @@ export default function AdminEvents() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(empty)
   const [loading, setLoading] = useState(false)
+  const [imgUploading, setImgUploading] = useState(false)
+  const fileRef = useRef(null)
 
   const load = () => eventService.getAll().then(r => setEvents(r.data || [])).catch(() => {})
   useEffect(() => { load() }, [])
@@ -21,6 +23,21 @@ export default function AdminEvents() {
     setEditing(ev)
     setForm({ ...ev, eventDate: ev.eventDate ? ev.eventDate.slice(0, 16) : '', price: ev.price?.toString() || '', totalSeats: ev.totalSeats?.toString() || '', availableSeats: ev.availableSeats?.toString() || '' })
     setModal(true)
+  }
+
+  const handleImagePick = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImgUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'events')
+      const res = await adminService.uploadFile(fd)
+      setForm(prev => ({ ...prev, imageUrl: res.data }))
+      toast.success('Image uploaded!')
+    } catch { toast.error('Image upload failed') }
+    finally { setImgUploading(false); e.target.value = '' }
   }
 
   const handleSave = async (e) => {
@@ -55,16 +72,19 @@ export default function AdminEvents() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {events.map(ev => (
           <div key={ev.id} className="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden hover:shadow-md hover:border-[#C9A84C] transition-all">
-            {ev.imageUrl && <img src={ev.imageUrl} alt={ev.title} className="w-full h-36 object-cover" />}
+            {ev.imageUrl
+              ? <img src={ev.imageUrl} alt={ev.title} className="w-full h-36 object-cover" />
+              : <div className="w-full h-36 bg-[#F2EAE0] flex items-center justify-center"><Image size={28} className="text-[#C9A84C] opacity-40" /></div>
+            }
             <div className="p-4">
               <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-[#2D1B69]">{ev.title}</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ev.paid ? 'bg-[#EDE0F8] text-[#6B2D8B]' : 'bg-green-100 text-green-700'}`}>
-                  {ev.paid ? `₹${ev.price}` : 'Free'}
-                </span>
+                <h3 className="font-bold text-[#2D1B69] text-sm">{ev.title}</h3>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${ev.paid ? 'bg-[#EDE0F8] text-[#6B2D8B]' : 'bg-green-100 text-green-700'}`}>{ev.paid ? `₹${ev.price}` : 'Free'}</span>
               </div>
-              {ev.eventDate && <p className="text-[#7B6B8B] text-xs mb-2">{new Date(ev.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>}
-              <p className="text-[#7B6B8B] text-sm mb-3 line-clamp-2">{ev.description}</p>
+              {ev.eventDate && (
+                <p className="text-xs text-[#7B6B8B] flex items-center gap-1 mb-1"><Calendar size={11} /> {new Date(ev.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+              )}
+              {ev.venue && <p className="text-xs text-[#7B6B8B] flex items-center gap-1 mb-3"><MapPin size={11} /> {ev.venue}</p>}
               <div className="flex gap-2">
                 <button onClick={() => openEdit(ev)} className="flex-1 flex items-center justify-center gap-1 border border-purple-200 text-[#6B2D8B] py-2 rounded-lg text-sm hover:bg-[#EDE0F8] transition-colors">
                   <Pencil size={14} /> Edit
@@ -79,6 +99,7 @@ export default function AdminEvents() {
         {events.length === 0 && <div className="col-span-3 text-center py-16 text-[#7B6B8B]">No events yet.</div>}
       </div>
 
+      {/* Modal */}
       {modal && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -125,10 +146,24 @@ export default function AdminEvents() {
                   <input type="number" className="input-field" value={form.availableSeats} onChange={e => setForm({ ...form, availableSeats: e.target.value })} />
                 </div>
               </div>
+
+              {/* Image Upload */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1B69] mb-1">Image URL</label>
-                <input className="input-field" placeholder="https://..." value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} />
+                <label className="block text-sm font-medium text-[#2D1B69] mb-2">Event Image</label>
+                <div className="flex items-center gap-3">
+                  {form.imageUrl && (
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-purple-100 shrink-0">
+                      <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#6B2D8B]/40 text-[#6B2D8B] font-semibold text-sm cursor-pointer hover:bg-[#EDE0F8]/40 transition-colors ${imgUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                    <Upload size={15} />
+                    {imgUploading ? 'Uploading...' : form.imageUrl ? 'Change Image' : 'Choose Image from Device'}
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} disabled={imgUploading} />
+                  </label>
+                </div>
               </div>
+
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setModal(false)} className="flex-1 btn-secondary">Cancel</button>
                 <button type="submit" disabled={loading} className="flex-1 btn-primary disabled:opacity-60">

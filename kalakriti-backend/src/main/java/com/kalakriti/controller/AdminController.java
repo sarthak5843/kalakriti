@@ -28,11 +28,12 @@ public class AdminController {
     private final ContactService contactService;
     private final SiteSettingsService settingsService;
     private final UserRepository userRepository;
+    private final CloudinaryService cloudinaryService;
 
     public AdminController(CourseService courseService, EventService eventService,
                            GalleryService galleryService, TestimonialService testimonialService,
                            ContactService contactService, SiteSettingsService settingsService,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, CloudinaryService cloudinaryService) {
         this.courseService = courseService;
         this.eventService = eventService;
         this.galleryService = galleryService;
@@ -40,6 +41,7 @@ public class AdminController {
         this.contactService = contactService;
         this.settingsService = settingsService;
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     // ── STATS ─────────────────────────────────────────────
@@ -135,6 +137,17 @@ public class AdminController {
     public ResponseEntity<EventBooking> updateEventBookingStatus(@PathVariable Long id,
                                                                  @RequestParam String status) {
         return ResponseEntity.ok(eventService.updateBookingStatus(id, status));
+    }
+
+    // ── GENERIC FILE UPLOAD (returns URL) ───────────────────
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "folder", defaultValue = "misc") String folder) throws IOException {
+        Map result = cloudinaryService.upload(file, folder);
+        String url = (String) result.get("secure_url");
+        if (url == null || url.isBlank()) url = (String) result.get("url");
+        return ResponseEntity.ok(url);
     }
 
     // ── GALLERY ──────────────────────────────────────────────

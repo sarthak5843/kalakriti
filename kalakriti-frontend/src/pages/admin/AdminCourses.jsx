@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Plus, Pencil, Trash2, X, Upload, Image } from 'lucide-react'
 import toast from 'react-hot-toast'
 import AdminLayout from '../../components/admin/AdminLayout'
 import { adminService, courseService } from '../../services/services'
@@ -12,12 +12,33 @@ export default function AdminCourses() {
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(empty)
   const [loading, setLoading] = useState(false)
+  const [imgUploading, setImgUploading] = useState(false)
+  const fileRef = useRef(null)
 
   const load = () => courseService.getAll().then(r => setCourses(r.data || [])).catch(() => {})
   useEffect(() => { load() }, [])
 
   const openAdd = () => { setEditing(null); setForm(empty); setModal(true) }
-  const openEdit = (c) => { setEditing(c); setForm({ ...c, price: c.price?.toString(), durationWeeks: c.durationWeeks?.toString(), totalSeats: c.totalSeats?.toString() }); setModal(true) }
+  const openEdit = (c) => {
+    setEditing(c)
+    setForm({ ...c, price: c.price?.toString(), durationWeeks: c.durationWeeks?.toString(), totalSeats: c.totalSeats?.toString() })
+    setModal(true)
+  }
+
+  const handleImagePick = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setImgUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('folder', 'courses')
+      const res = await adminService.uploadFile(fd)
+      setForm(prev => ({ ...prev, imageUrl: res.data }))
+      toast.success('Image uploaded!')
+    } catch { toast.error('Image upload failed') }
+    finally { setImgUploading(false); e.target.value = '' }
+  }
 
   const handleSave = async (e) => {
     e.preventDefault()
@@ -38,13 +59,8 @@ export default function AdminCourses() {
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this course?')) return
-    try {
-      await adminService.deleteCourse(id)
-      toast.success('Course deleted')
-      load()
-    } catch {
-      toast.error('Failed to delete')
-    }
+    try { await adminService.deleteCourse(id); toast.success('Course deleted'); load() }
+    catch { toast.error('Failed to delete') }
   }
 
   return (
@@ -58,7 +74,10 @@ export default function AdminCourses() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map(c => (
           <div key={c.id} className="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden hover:shadow-md hover:border-[#C9A84C] transition-all">
-            {c.imageUrl && <img src={c.imageUrl} alt={c.title} className="w-full h-40 object-cover" />}
+            {c.imageUrl
+              ? <img src={c.imageUrl} alt={c.title} className="w-full h-40 object-cover" />
+              : <div className="w-full h-40 bg-[#F2EAE0] flex items-center justify-center"><Image size={32} className="text-[#C9A84C] opacity-40" /></div>
+            }
             <div className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-[#2D1B69]">{c.title}</h3>
@@ -101,7 +120,7 @@ export default function AdminCourses() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-[#2D1B69] mb-1">Highlights (one per line)</label>
-                <textarea className="input-field" rows={3} placeholder="Learn watercolor basics&#10;Color theory&#10;Brush techniques" value={form.highlights} onChange={e => setForm({ ...form, highlights: e.target.value })} />
+                <textarea className="input-field" rows={3} placeholder={"Learn watercolor basics\nColor theory\nBrush techniques"} value={form.highlights} onChange={e => setForm({ ...form, highlights: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -127,10 +146,24 @@ export default function AdminCourses() {
                   <input type="number" className="input-field" value={form.totalSeats} onChange={e => setForm({ ...form, totalSeats: e.target.value })} />
                 </div>
               </div>
+
+              {/* Image Upload */}
               <div>
-                <label className="block text-sm font-medium text-[#2D1B69] mb-1">Image URL</label>
-                <input className="input-field" placeholder="https://..." value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })} />
+                <label className="block text-sm font-medium text-[#2D1B69] mb-2">Course Image</label>
+                <div className="flex items-center gap-3">
+                  {form.imageUrl && (
+                    <div className="w-16 h-16 rounded-lg overflow-hidden border border-purple-100 shrink-0">
+                      <img src={form.imageUrl} alt="preview" className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <label className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border-2 border-dashed border-[#6B2D8B]/40 text-[#6B2D8B] font-semibold text-sm cursor-pointer hover:bg-[#EDE0F8]/40 transition-colors ${imgUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                    <Upload size={15} />
+                    {imgUploading ? 'Uploading...' : form.imageUrl ? 'Change Image' : 'Choose Image from Device'}
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImagePick} disabled={imgUploading} />
+                  </label>
+                </div>
               </div>
+
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setModal(false)} className="flex-1 btn-secondary">Cancel</button>
                 <button type="submit" disabled={loading} className="flex-1 btn-primary disabled:opacity-60">
