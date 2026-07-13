@@ -99,4 +99,7 @@ export const adminService = {
   uploadQrCode: (formData) => api.post('/admin/settings/qrcode', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  uploadInstructorPhoto: (formData) => api.post('/admin/settings/instructor-photo', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 }

@@ -65,4 +65,12 @@ public class SiteSettingsService {
         settings.setQrCodePublicId((String) result.get("public_id"));
         return settingsRepository.save(settings);
     }
+
+    // Upload a single instructor photo and return just the URL (not saved to settings)
+    public String uploadInstructorPhoto(MultipartFile file) throws IOException {
+        Map result = cloudinaryService.upload(file, "instructor");
+        String url = (String) result.get("secure_url");
+        if (url == null) url = (String) result.get("url");
+        return url;
+    }
 }

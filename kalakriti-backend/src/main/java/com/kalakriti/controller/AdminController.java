@@ -211,4 +211,10 @@ public class AdminController {
     public ResponseEntity<SiteSettings> uploadQrCode(@RequestParam("file") MultipartFile file) throws IOException {
         return ResponseEntity.ok(settingsService.uploadQrCode(file));
     }
+
+    @PostMapping("/settings/instructor-photo")
+    public ResponseEntity<String> uploadInstructorPhoto(@RequestParam("file") MultipartFile file) throws IOException {
+        String url = settingsService.uploadInstructorPhoto(file);
+        return ResponseEntity.ok(url);
+    }
 }

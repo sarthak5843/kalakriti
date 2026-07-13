@@ -29,6 +29,8 @@ export default function AdminSettings() {
   const [loading, setLoading] = useState(false)
   const [logoLoading, setLogoLoading] = useState(false)
   const [qrLoading, setQrLoading] = useState(false)
+  const [photoUploading, setPhotoUploading] = useState(false)
+  const [artUploading, setArtUploading] = useState(false)
 
   useEffect(() => {
     siteService.get().then(r => {
@@ -87,6 +89,43 @@ export default function AdminSettings() {
       toast.success('UPI QR Code updated!')
       setQrFile(null)
     } catch { toast.error('QR Code upload failed') } finally { setQrLoading(false) }
+  }
+
+  const handleInstructorPhotoUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setPhotoUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await adminService.uploadInstructorPhoto(fd)
+      setSettings(prev => ({ ...prev, instructorImageUrl: res.data }))
+      toast.success('Profile photo uploaded!')
+    } catch { toast.error('Upload failed. Please try again.') }
+    finally { setPhotoUploading(false); e.target.value = '' }
+  }
+
+  const handleArtworkUpload = async (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    setArtUploading(true)
+    let added = 0
+    try {
+      for (const file of files) {
+        const fd = new FormData()
+        fd.append('file', file)
+        const res = await adminService.uploadInstructorPhoto(fd)
+        const url = res.data
+        setSettings(prev => {
+          const current = prev.instructorImages ? prev.instructorImages.split(',').filter(Boolean) : []
+          if (current.includes(url)) return prev
+          return { ...prev, instructorImages: [...current, url].join(',') }
+        })
+        added++
+      }
+      toast.success(`${added} photo${added > 1 ? 's' : ''} uploaded!`)
+    } catch { toast.error('Some uploads failed. Please try again.') }
+    finally { setArtUploading(false); e.target.value = '' }
   }
 
   const handleSave = async (e) => {
@@ -216,44 +255,32 @@ export default function AdminSettings() {
                 <textarea className="input-field" rows={4} value={settings.instructorBio} onChange={e => setSettings({ ...settings, instructorBio: e.target.value })} placeholder="Write about the instructor's background, art specialty, teaching style..." />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-1">Instructor Profile Image URL</label>
-                <input className="input-field" value={settings.instructorImageUrl} onChange={e => setSettings({ ...settings, instructorImageUrl: e.target.value })} placeholder="e.g. https://images.unsplash.com/..." />
-                {settings.instructorImageUrl && (
-                  <div className="mt-2 h-24 w-24 rounded-full overflow-hidden border border-[#EBE3D5] bg-[#FCFAF7] p-1">
-                    <img src={settings.instructorImageUrl} alt="Instructor Preview" className="w-full h-full object-cover rounded-full" onError={e => { e.target.style.display = 'none' }} />
+                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-2">Instructor Profile Photo</label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#EBE3D5] bg-[#FCFAF7] flex items-center justify-center shrink-0">
+                    {settings.instructorImageUrl
+                      ? <img src={settings.instructorImageUrl} alt="Instructor" className="w-full h-full object-cover" onError={e => { e.target.style.display = 'none' }} />
+                      : <Upload size={22} className="text-[#704A87] opacity-40" />}
                   </div>
-                )}
+                  <div className="flex-1">
+                    <label className={`flex items-center gap-2 justify-center w-full py-2.5 px-4 rounded-xl border-2 border-dashed border-[#704A87]/40 text-[#704A87] font-semibold text-sm cursor-pointer hover:bg-[#704A87]/5 transition-colors ${photoUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                      <Upload size={15} />
+                      {photoUploading ? 'Uploading...' : 'Choose Photo from Device'}
+                      <input type="file" accept="image/*" className="hidden" onChange={handleInstructorPhotoUpload} disabled={photoUploading} />
+                    </label>
+                    <p className="text-xs text-[#8F8082] mt-1 text-center">JPG, PNG, WEBP supported</p>
+                  </div>
+                </div>
               </div>
 
               {/* Multiple Instructor Artwork/Portfolio Photos */}
               <div className="border-t border-[#EBE3D5]/40 pt-4">
-                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-2">Instructor Selected Artworks / Portfolio Photos</label>
-                <div className="flex gap-2 mb-3">
-                  <input
-                    className="input-field py-2"
-                    placeholder="Paste artwork image URL..."
-                    value={newArtUrl}
-                    onChange={e => setNewArtUrl(e.target.value)}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!newArtUrl.trim()) return;
-                      const current = settings.instructorImages ? settings.instructorImages.split(',').filter(Boolean) : [];
-                      if (current.includes(newArtUrl.trim())) {
-                        toast.error('Image already added');
-                        return;
-                      }
-                      const updatedImages = [...current, newArtUrl.trim()].join(',');
-                      setSettings({ ...settings, instructorImages: updatedImages });
-                      setNewArtUrl('');
-                      toast.success('Artwork added to list!');
-                    }}
-                    className="btn-pink py-2 px-4 text-xs font-bold shrink-0 cursor-pointer rounded-xl"
-                  >
-                    Add Photo
-                  </button>
-                </div>
+                <label className="block text-xs font-bold text-[#3E3431] uppercase tracking-wider mb-2">Instructor Artworks / Portfolio Photos</label>
+                <label className={`flex items-center gap-2 justify-center w-full py-3 px-4 mb-3 rounded-xl border-2 border-dashed border-[#704A87]/40 text-[#704A87] font-semibold text-sm cursor-pointer hover:bg-[#704A87]/5 transition-colors ${artUploading ? 'opacity-60 pointer-events-none' : ''}`}>
+                  <Upload size={15} />
+                  {artUploading ? 'Uploading photos...' : 'Choose Photos from Device (multiple allowed)'}
+                  <input type="file" accept="image/*" multiple className="hidden" onChange={handleArtworkUpload} disabled={artUploading} />
+                </label>
                 
                 {/* Thumbnails grid */}
                 <div className="grid grid-cols-4 gap-3 max-h-48 overflow-y-auto p-1 border border-[#EBE3D5] rounded-xl bg-[#FCFAF7]">
