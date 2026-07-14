@@ -163,16 +163,6 @@ export default function Courses() {
                        item._category === 'SHORT_TERM' ? 'Short-Term' :
                        'Professional'}
                     </span>
-                    {item._type === 'workshop' && (
-                      <span className="absolute top-3 right-3 text-xs bg-emerald-500 text-white px-2 py-1.5 rounded-full font-bold">
-                        {item.paid ? `₹${item.price}` : 'Free'}
-                      </span>
-                    )}
-                    {item._type === 'course' && item.totalSeats && (
-                      <span className="absolute top-3 right-3 text-xs bg-white/90 text-[#704A87] px-2 py-1.5 rounded-full font-bold border border-[#EBE3D5]">
-                        {item.totalSeats} seats
-                      </span>
-                    )}
                   </div>
 
                   {/* Body */}
