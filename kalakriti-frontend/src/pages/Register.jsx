@@ -36,18 +36,16 @@ export default function Register() {
           src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1200&q=85"
           alt="Art supplies"
           className="w-full h-full object-cover"
-          style={{ filter: 'brightness(0.45) saturate(0.75)' }}
         />
-        <div className="absolute inset-0"
-          style={{ background: 'linear-gradient(160deg, rgba(112,74,135,0.80) 0%, rgba(62,52,49,0.85) 100%)' }} />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-12"
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.08) 60%, transparent 100%)' }}>
           <img src="/logo.png" alt="Kalakriti" className="w-40 h-40 object-contain drop-shadow-2xl mb-6 border-4 border-white/20 rounded-full p-2 bg-white/10 backdrop-blur-sm" />
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-12 bg-[#D4B26F]" />
             <div className="w-1.5 h-1.5 rounded-full bg-[#D4B26F]" />
             <div className="h-px w-12 bg-[#D4B26F]" />
           </div>
-          <p className="text-white/80 text-base leading-relaxed italic font-medium"
+          <p className="text-white/90 text-base leading-relaxed italic font-medium drop-shadow-md"
             style={{ fontFamily: "'Playfair Display', serif" }}>
             Begin your creative journey with Bangalore's most beloved art studio
           </p>
