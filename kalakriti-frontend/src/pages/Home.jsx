@@ -37,6 +37,7 @@ export default function Home() {
     { icon: Users, value: siteSettings?.happyStudents || '500+', label: 'Happy Students' },
     { icon: BookOpen, value: siteSettings?.artCourses || '20+', label: 'Art Courses' },
     { icon: Award, value: siteSettings?.yearsExperience || '10+', label: 'Years of Excellence' },
+    { icon: Star, value: siteSettings?.workshopsConducted || '50+', label: 'Workshops' },
   ]
 
   return (
@@ -413,7 +414,7 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             <Link to="/register" className="bg-[#E0B3B7] text-[#3E3431] px-8 py-4 rounded-full font-bold text-base hover:bg-[#D89FA4] transition-colors shadow-lg">
-              Join Now — It's Free
+              Enroll Today
             </Link>
             <Link to="/contact" className="border-2 border-white text-white px-8 py-4 rounded-full font-bold text-base hover:bg-white hover:text-[#704A87] transition-all">
               Contact Us

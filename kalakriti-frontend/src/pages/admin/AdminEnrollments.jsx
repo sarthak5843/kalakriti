@@ -12,6 +12,7 @@ function StatusBadge({ status }) {
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([])
   const [filter, setFilter] = useState('PENDING')
+  const [courseFilter, setCourseFilter] = useState('ALL')
 
   const load = () => adminService.getEnrollments().then(r => setEnrollments(r.data || [])).catch(() => {})
   useEffect(() => { load() }, [])
@@ -25,17 +26,40 @@ export default function AdminEnrollments() {
     catch { toast.error('Failed') }
   }
 
-  const filtered = enrollments.filter(e => e.status === filter)
+  const uniqueCourses = [...new Set(enrollments.map(e => e.course?.title).filter(Boolean))]
+
+  const filtered = enrollments.filter(e => {
+    if (e.status !== filter) return false
+    if (courseFilter !== 'ALL' && e.course?.title !== courseFilter) return false
+    return true
+  })
 
   return (
     <AdminLayout title="Manage Enrollments">
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {['PENDING', 'APPROVED', 'REJECTED'].map(s => (
-          <button key={s} onClick={() => setFilter(s)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === s ? 'bg-[#6B2D8B] text-white' : 'bg-white border border-purple-200 text-[#7B6B8B] hover:border-[#6B2D8B]'}`}>
-            {s} ({enrollments.filter(e => e.status === s).length})
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex gap-2 flex-wrap">
+          {['PENDING', 'APPROVED', 'REJECTED'].map(s => (
+            <button key={s} onClick={() => setFilter(s)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === s ? 'bg-[#6B2D8B] text-white' : 'bg-white border border-purple-200 text-[#7B6B8B] hover:border-[#6B2D8B]'}`}>
+              {s} ({enrollments.filter(e => e.status === s).length})
+            </button>
+          ))}
+        </div>
+        
+        {/* Course-wise Filter */}
+        <div className="bg-white border border-purple-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
+          <span className="text-sm text-[#7B6B8B] font-bold">Filter by Course:</span>
+          <select 
+            value={courseFilter} 
+            onChange={e => setCourseFilter(e.target.value)}
+            className="text-sm text-[#2D1B69] font-medium bg-transparent border-none focus:outline-none cursor-pointer p-1"
+          >
+            <option value="ALL">All Courses</option>
+            {uniqueCourses.map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden">
@@ -61,7 +85,9 @@ export default function AdminEnrollments() {
                     <p className="font-medium text-[#2D1B69]">{e.user?.fullName}</p>
                     <p className="text-[#7B6B8B] text-xs">{e.user?.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-[#7B6B8B]">{e.course?.title}</td>
+                  <td className="px-4 py-3">
+                    <span className="font-bold text-[#6B2D8B] bg-purple-50 px-2 py-1 rounded-md">{e.course?.title}</span>
+                  </td>
                   <td className="px-4 py-3 text-[#7B6B8B]">{e.batch?.batchName || '—'}</td>
                   <td className="px-4 py-3 font-mono text-xs font-semibold text-[#6B2D8B]">{e.paymentId || '—'}</td>
                   <td className="px-4 py-3 text-[#7B6B8B]">{new Date(e.enrolledAt).toLocaleDateString('en-IN')}</td>

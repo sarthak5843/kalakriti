@@ -41,6 +41,10 @@ public class SiteSettingsService {
         settings.setAboutImageUrl(updated.getAboutImageUrl());
         settings.setInstructorImageUrl(updated.getInstructorImageUrl());
         settings.setInstructorImages(updated.getInstructorImages());
+        settings.setHappyStudents(updated.getHappyStudents());
+        settings.setArtCourses(updated.getArtCourses());
+        settings.setYearsExperience(updated.getYearsExperience());
+        settings.setWorkshopsConducted(updated.getWorkshopsConducted());
         return settingsRepository.save(settings);
     }
 

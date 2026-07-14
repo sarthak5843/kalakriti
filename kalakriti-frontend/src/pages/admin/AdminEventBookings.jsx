@@ -17,6 +17,7 @@ function StatusBadge({ status }) {
 export default function AdminEventBookings() {
   const [bookings, setBookings] = useState([])
   const [filter, setFilter] = useState('PENDING')
+  const [eventFilter, setEventFilter] = useState('ALL')
 
   const load = () => adminService.getEventBookings().then(r => setBookings(r.data || [])).catch(() => {})
   useEffect(() => { load() }, [])
@@ -41,17 +42,40 @@ export default function AdminEventBookings() {
     }
   }
 
-  const filtered = bookings.filter(b => b.status === filter)
+  const uniqueEvents = [...new Set(bookings.map(b => b.event?.title).filter(Boolean))]
+
+  const filtered = bookings.filter(b => {
+    if (b.status !== filter) return false
+    if (eventFilter !== 'ALL' && b.event?.title !== eventFilter) return false
+    return true
+  })
 
   return (
     <AdminLayout title="Manage Event Bookings">
-      <div className="flex gap-2 mb-6 flex-wrap">
-        {['PENDING', 'CONFIRMED', 'REJECTED'].map(s => (
-          <button key={s} onClick={() => setFilter(s)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === s ? 'bg-[#6B2D8B] text-white' : 'bg-white border border-purple-200 text-[#7B6B8B] hover:border-[#6B2D8B]'}`}>
-            {s} ({bookings.filter(b => b.status === s).length})
-          </button>
-        ))}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex gap-2 flex-wrap">
+          {['PENDING', 'CONFIRMED', 'REJECTED'].map(s => (
+            <button key={s} onClick={() => setFilter(s)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${filter === s ? 'bg-[#6B2D8B] text-white' : 'bg-white border border-purple-200 text-[#7B6B8B] hover:border-[#6B2D8B]'}`}>
+              {s} ({bookings.filter(b => b.status === s).length})
+            </button>
+          ))}
+        </div>
+
+        {/* Event-wise Filter */}
+        <div className="bg-white border border-purple-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
+          <span className="text-sm text-[#7B6B8B] font-bold">Filter by Event/Workshop:</span>
+          <select 
+            value={eventFilter} 
+            onChange={e => setEventFilter(e.target.value)}
+            className="text-sm text-[#2D1B69] font-medium bg-transparent border-none focus:outline-none cursor-pointer p-1"
+          >
+            <option value="ALL">All Events & Workshops</option>
+            {uniqueEvents.map(e => (
+              <option key={e} value={e}>{e}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-purple-100 overflow-hidden">
@@ -77,7 +101,9 @@ export default function AdminEventBookings() {
                     <p className="font-medium text-[#2D1B69]">{b.user?.fullName}</p>
                     <p className="text-[#7B6B8B] text-xs">{b.user?.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-[#7B6B8B] font-medium">{b.event?.title}</td>
+                  <td className="px-4 py-3">
+                    <span className="font-bold text-[#6B2D8B] bg-purple-50 px-2 py-1 rounded-md">{b.event?.title}</span>
+                  </td>
                   <td className="px-4 py-3 text-[#7B6B8B]">
                     <p className="text-xs">{b.event?.eventDate ? new Date(b.event.eventDate).toLocaleDateString('en-IN') : '—'}</p>
                     <p className="text-xs text-gray-500 font-medium">{b.event?.venue || '—'}</p>

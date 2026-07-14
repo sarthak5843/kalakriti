@@ -66,8 +66,8 @@ export default function Events() {
                         <Brush size={40} className="text-[#704A87] opacity-25" />
                       </div>
                     )}
-                    <span className={`absolute top-3 right-3 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider ${event.paid ? 'bg-[#D4B26F] text-white shadow-sm' : 'bg-emerald-500 text-white'}`}>
-                      {event.paid ? `₹${event.price}` : 'Free'}
+                    <span className="absolute top-3 right-3 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider bg-[#D4B26F] text-white shadow-sm">
+                      {event.price > 0 ? `₹${event.price?.toLocaleString()}` : 'Contact for Fees'}
                     </span>
                   </div>
                   <div className="p-6">
