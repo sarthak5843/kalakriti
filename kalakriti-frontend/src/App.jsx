@@ -27,6 +27,7 @@ import AdminGallery from './pages/admin/AdminGallery'
 import AdminTestimonials from './pages/admin/AdminTestimonials'
 import AdminEnrollments from './pages/admin/AdminEnrollments'
 import AdminEventBookings from './pages/admin/AdminEventBookings'
+import AdminRegisteredStudents from './pages/admin/AdminRegisteredStudents'
 import AdminContacts from './pages/admin/AdminContacts'
 import AdminSettings from './pages/admin/AdminSettings'
 
@@ -99,6 +100,7 @@ export default function App() {
           <Route path="/admin/testimonials" element={<AdminRoute><AdminTestimonials /></AdminRoute>} />
           <Route path="/admin/enrollments" element={<AdminRoute><AdminEnrollments /></AdminRoute>} />
           <Route path="/admin/event-bookings" element={<AdminRoute><AdminEventBookings /></AdminRoute>} />
+          <Route path="/admin/students" element={<AdminRoute><AdminRegisteredStudents /></AdminRoute>} />
           <Route path="/admin/contacts" element={<AdminRoute><AdminContacts /></AdminRoute>} />
           <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
         </Routes>

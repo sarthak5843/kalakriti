@@ -66,9 +66,6 @@ export default function Events() {
                         <Brush size={40} className="text-[#704A87] opacity-25" />
                       </div>
                     )}
-                    <span className="absolute top-3 right-3 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider bg-[#D4B26F] text-white shadow-sm">
-                      {event.price > 0 ? `₹${event.price?.toLocaleString()}` : 'Contact for Fees'}
-                    </span>
                   </div>
                   <div className="p-6">
                     <h3 className="font-bold text-[#3E3431] text-lg mb-2">{event.title}</h3>
@@ -77,9 +74,16 @@ export default function Events() {
                       <Calendar size={13} />
                       <span>{event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Date TBA'}</span>
                     </div>
-                    <Link to={`/events/${event.id}`} className="btn-pink w-full text-center py-2.5 text-sm flex items-center justify-center gap-1 font-bold">
-                      View & Register <ArrowRight size={14} />
-                    </Link>
+                    <div className="flex justify-between items-center pt-4 border-t border-[#EBE3D5]">
+                      <span className="text-[#704A87] font-extrabold text-lg">
+                        {(event.price === 0 || event.price === '0' || !event.price)
+                          ? <span className="text-emerald-600 text-sm font-bold">Contact for Fees</span>
+                          : `₹${Number(event.price).toLocaleString()}`}
+                      </span>
+                      <Link to={`/events/${event.id}`} className="btn-secondary py-2 px-5 text-xs font-bold">
+                        Register <ArrowRight size={13} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -9,9 +9,28 @@ function StatusBadge({ status }) {
   return <span className={`text-xs px-2 py-1 rounded-full font-medium ${colors[status] || 'bg-gray-100'}`}>{status}</span>
 }
 
+function categorize(title) {
+  const t = title?.toLowerCase() || ''
+  if (t.includes('bootcamp') || t.includes('foundation art')) return 'BOOTCAMP'
+  if (t.includes('workshop')) return 'WORKSHOP'
+  if (t.includes('hobby')) return 'HOBBY'
+  if (t.includes('2-day') || t.includes('4-day') || t.includes('12-week') || t.includes('short')) return 'SHORT_TERM'
+  return 'PROFESSIONAL'
+}
+
+const CATEGORIES = [
+  { key: 'ALL', label: 'All Categories' },
+  { key: 'HOBBY', label: 'Hobby Classes' },
+  { key: 'PROFESSIONAL', label: 'Professional Courses' },
+  { key: 'BOOTCAMP', label: 'Bootcamp Programs' },
+  { key: 'WORKSHOP', label: 'Workshops' },
+  { key: 'SHORT_TERM', label: 'Short-Term Courses' }
+]
+
 export default function AdminEnrollments() {
   const [enrollments, setEnrollments] = useState([])
   const [filter, setFilter] = useState('PENDING')
+  const [categoryFilter, setCategoryFilter] = useState('ALL')
   const [courseFilter, setCourseFilter] = useState('ALL')
 
   const load = () => adminService.getEnrollments().then(r => setEnrollments(r.data || [])).catch(() => {})
@@ -26,17 +45,25 @@ export default function AdminEnrollments() {
     catch { toast.error('Failed') }
   }
 
-  const uniqueCourses = [...new Set(enrollments.map(e => e.course?.title).filter(Boolean))]
+  // Filter courses based on selected category
+  const filteredCoursesList = enrollments
+    .map(e => e.course?.title)
+    .filter(Boolean)
+    .filter(title => categoryFilter === 'ALL' || categorize(title) === categoryFilter)
+  
+  const uniqueCourses = [...new Set(filteredCoursesList)]
 
   const filtered = enrollments.filter(e => {
     if (e.status !== filter) return false
-    if (courseFilter !== 'ALL' && e.course?.title !== courseFilter) return false
+    const title = e.course?.title
+    if (categoryFilter !== 'ALL' && categorize(title) !== categoryFilter) return false
+    if (courseFilter !== 'ALL' && title !== courseFilter) return false
     return true
   })
 
   return (
     <AdminLayout title="Manage Enrollments">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6">
         <div className="flex gap-2 flex-wrap">
           {['PENDING', 'APPROVED', 'REJECTED'].map(s => (
             <button key={s} onClick={() => setFilter(s)}
@@ -46,19 +73,34 @@ export default function AdminEnrollments() {
           ))}
         </div>
         
-        {/* Course-wise Filter */}
-        <div className="bg-white border border-purple-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
-          <span className="text-sm text-[#7B6B8B] font-bold">Filter by Course:</span>
-          <select 
-            value={courseFilter} 
-            onChange={e => setCourseFilter(e.target.value)}
-            className="text-sm text-[#2D1B69] font-medium bg-transparent border-none focus:outline-none cursor-pointer p-1"
-          >
-            <option value="ALL">All Courses</option>
-            {uniqueCourses.map(c => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+        {/* Category & Course Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-white border border-purple-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span className="text-sm text-[#7B6B8B] font-bold">Category:</span>
+            <select 
+              value={categoryFilter} 
+              onChange={e => { setCategoryFilter(e.target.value); setCourseFilter('ALL'); }}
+              className="text-sm text-[#2D1B69] font-medium bg-transparent border-none focus:outline-none cursor-pointer p-1"
+            >
+              {CATEGORIES.map(c => (
+                <option key={c.key} value={c.key}>{c.label}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="bg-white border border-purple-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
+            <span className="text-sm text-[#7B6B8B] font-bold">Course:</span>
+            <select 
+              value={courseFilter} 
+              onChange={e => setCourseFilter(e.target.value)}
+              className="text-sm text-[#2D1B69] font-medium bg-transparent border-none focus:outline-none cursor-pointer p-1 max-w-[200px] truncate"
+            >
+              <option value="ALL">All Courses in Category</option>
+              {uniqueCourses.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
