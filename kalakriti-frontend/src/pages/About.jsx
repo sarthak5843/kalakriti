@@ -88,7 +88,7 @@ export default function About() {
                 {aboutText}
               </div>
               <div className="space-y-3.5 mb-8">
-                {['Personalized attention in small batches', 'All art materials provided', 'Flexible morning & evening batches', 'Classes for all age groups — 5 to 65+'].map(f => (
+                {['Personalized attention in small batches', 'Some art materials provided', 'Flexible morning & evening batches', 'Classes for all age groups — 5 to 65+'].map(f => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle size={16} className="text-[#D4B26F] shrink-0" />
                     <span className="text-[#5C504E] text-sm font-medium">{f}</span>
@@ -109,10 +109,10 @@ export default function About() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 {[
-                  { icon: Users, value: '500+', label: 'Happy Students' },
-                  { icon: Palette, value: '20+', label: 'Art Courses' },
-                  { icon: Award, value: '10+', label: 'Years of Excellence' },
-                  { icon: Brush, value: '50+', label: 'Workshops Conducted' },
+                  { icon: Users, value: settings?.happyStudents || '500+', label: 'Happy Students' },
+                  { icon: Palette, value: settings?.artCourses || '20+', label: 'Art Courses' },
+                  { icon: Award, value: settings?.yearsExperience || '10+', label: 'Years of Excellence' },
+                  { icon: Brush, value: settings?.workshopsConducted || '50+', label: 'Workshops Conducted' },
                 ].map(({ icon: Icon, value, label }) => (
                   <div key={label} className="art-card p-5 text-center">
                     <div className="w-10 h-10 rounded-full bg-[#704A87]/10 flex items-center justify-center mx-auto mb-2 border border-[#704A87]/15">
@@ -179,8 +179,8 @@ export default function About() {
 
           </div>
 
-          {/* Dynamic Instructor Portfolio Artwork Images */}
-          {settings?.instructorImages ? (
+          {/* Dynamic Instructor Portfolio Artwork Images — only shows if admin has uploaded */}
+          {settings?.instructorImages && settings.instructorImages.split(',').filter(Boolean).length > 0 && (
             <div className="mt-20 border-t border-[#EBE3D5]/40 pt-16">
               <SectionHeader tag="Artist Showcase" title="Selected Artworks & Creations" subtitle={`Beautiful masterpieces created by ${instructorName} and featured in our studio exhibition.`} />
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -198,30 +198,8 @@ export default function About() {
                 ))}
               </div>
             </div>
-          ) : (
-            /* Fallback artwork collection if none is set in Settings */
-            <div className="mt-20 border-t border-[#EBE3D5]/40 pt-16">
-              <SectionHeader tag="Artist Showcase" title="Selected Artworks & Creations" subtitle={`Beautiful masterpieces created by ${instructorName} and featured in our studio exhibition.`} />
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {[
-                  "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=500&q=80",
-                  "https://images.unsplash.com/photo-1579783928621-7a13d66a6211?w=500&q=80",
-                  "https://images.unsplash.com/photo-1580136579312-94651dfd596d?w=500&q=80",
-                  "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=500&q=80"
-                ].map((url, i) => (
-                  <div key={i} className="art-card group bg-white p-2">
-                    <div className="aspect-[4/3] rounded-xl overflow-hidden bg-[#FCFAF7] border border-[#EBE3D5]/60 relative">
-                      <img
-                        src={url}
-                        alt={`Creation ${i + 1}`}
-                        className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-500"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           )}
+
 
         </div>
       </section>
@@ -249,7 +227,7 @@ export default function About() {
               { icon: Palette, title: 'Personalized Learning', desc: 'Small batch sizes ensure every student gets individual attention and guidance.' },
               { icon: Brush, title: 'All Art Forms', desc: 'From Madhubani to watercolors, acrylics to digital — we cover every medium.' },
               { icon: Award, title: 'All Age Groups', desc: 'Specially designed programs for kids (5+), teens, adults, and senior citizens.' },
-              { icon: CheckCircle, title: 'All Materials Provided', desc: 'No need to buy anything. All art supplies are included in the course fee.' },
+              { icon: CheckCircle, title: 'Materials Provided', desc: 'Some art materials are provided. Additional supplies may vary by course type.' },
               { icon: Clock, title: 'Flexible Timings', desc: 'Morning, afternoon, and evening batches to fit your schedule.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/15 hover:bg-white/15 transition-all">

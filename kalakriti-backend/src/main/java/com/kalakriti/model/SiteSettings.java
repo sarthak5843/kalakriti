@@ -37,6 +37,12 @@ public class SiteSettings {
     @Column(columnDefinition = "TEXT")
     private String instructorImages;
 
+    // Admin-configurable stats shown on homepage & about page
+    private String happyStudents = "500+";
+    private String artCourses = "20+";
+    private String yearsExperience = "10+";
+    private String workshopsConducted = "50+";
+
     public Long getId() { return id; }
     public String getLogoUrl() { return logoUrl; }
     public void setLogoUrl(String logoUrl) { this.logoUrl = logoUrl; }
@@ -74,4 +80,12 @@ public class SiteSettings {
     public void setInstructorImageUrl(String instructorImageUrl) { this.instructorImageUrl = instructorImageUrl; }
     public String getInstructorImages() { return instructorImages; }
     public void setInstructorImages(String instructorImages) { this.instructorImages = instructorImages; }
+    public String getHappyStudents() { return happyStudents; }
+    public void setHappyStudents(String happyStudents) { this.happyStudents = happyStudents; }
+    public String getArtCourses() { return artCourses; }
+    public void setArtCourses(String artCourses) { this.artCourses = artCourses; }
+    public String getYearsExperience() { return yearsExperience; }
+    public void setYearsExperience(String yearsExperience) { this.yearsExperience = yearsExperience; }
+    public String getWorkshopsConducted() { return workshopsConducted; }
+    public void setWorkshopsConducted(String workshopsConducted) { this.workshopsConducted = workshopsConducted; }
 }

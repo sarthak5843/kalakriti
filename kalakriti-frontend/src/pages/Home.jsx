@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, Users, BookOpen, Award, Palette, Brush, Star, CheckCircle, Clock, MapPin } from 'lucide-react'
-import { courseService, galleryService, eventService, testimonialService } from '../services/services'
+import { courseService, galleryService, eventService, testimonialService, siteService } from '../services/services'
 
 function SectionHeader({ tag, title, subtitle, center = true, light = false }) {
   return (
@@ -23,13 +23,21 @@ export default function Home() {
   const [images, setImages] = useState([])
   const [events, setEvents] = useState([])
   const [testimonials, setTestimonials] = useState([])
+  const [siteSettings, setSiteSettings] = useState(null)
 
   useEffect(() => {
     courseService.getAll().then(r => setCourses(r.data?.slice(0, 3) || [])).catch(() => {})
     galleryService.getImages().then(r => setImages(r.data?.slice(0, 6) || [])).catch(() => {})
     eventService.getAll().then(r => setEvents(r.data?.slice(0, 3) || [])).catch(() => {})
     testimonialService.getApproved().then(r => setTestimonials(r.data?.slice(0, 3) || [])).catch(() => {})
+    siteService.get().then(r => setSiteSettings(r.data)).catch(() => {})
   }, [])
+
+  const stats = [
+    { icon: Users, value: siteSettings?.happyStudents || '500+', label: 'Happy Students' },
+    { icon: BookOpen, value: siteSettings?.artCourses || '20+', label: 'Art Courses' },
+    { icon: Award, value: siteSettings?.yearsExperience || '10+', label: 'Years of Excellence' },
+  ]
 
   return (
     <div className="pt-16 md:pt-20">
@@ -97,13 +105,9 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Stats */}
+            {/* Dynamic Stats */}
             <div className="flex flex-wrap justify-center gap-10 mt-16 pt-10 border-t border-[#EBE3D5]">
-              {[
-                { icon: Users, value: '500+', label: 'Happy Students' },
-                { icon: BookOpen, value: '20+', label: 'Art Courses' },
-                { icon: Award, value: '10+', label: 'Years of Excellence' },
-              ].map(({ icon: Icon, value, label }) => (
+              {stats.map(({ icon: Icon, value, label }) => (
                 <div key={label} className="flex items-center gap-3 bg-white/40 border border-[#EBE3D5]/50 px-5 py-2.5 rounded-2xl shadow-sm backdrop-blur-sm">
                   <div className="w-10 h-10 rounded-full bg-[#704A87]/10 flex items-center justify-center border border-[#704A87]/20">
                     <Icon size={18} className="text-[#704A87]" />
@@ -119,11 +123,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── SERVICES STRIP ── */}
+      {/* ── SERVICES STRIP (Birthday Parties removed) ── */}
       <section className="py-4 bg-[#704A87]/15 border-y border-[#EBE3D5]/60 relative z-10 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-center gap-x-10 gap-y-3">
-            {['Art Classes', 'Workshops', 'Hobby Classes', 'Custom Art', 'Art Events', 'Birthday Parties'].map(s => (
+            {['Art Classes', 'Workshops', 'Hobby Classes', 'Custom Art', 'Art Events'].map(s => (
               <span key={s} className="flex items-center gap-2 text-[#3E3431] text-xs font-bold uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#D4B26F] inline-block animate-pulse" />
                 {s}
@@ -152,7 +156,7 @@ export default function Home() {
                 traditional Indian art forms with contemporary techniques.
               </p>
               <div className="space-y-3.5 mb-8">
-                {['Personalized attention in small batches', 'All art materials provided', 'Flexible morning & evening batches', 'Classes for all age groups — 5 to 65+'].map(f => (
+                {['Personalized attention in small batches', 'Some art materials provided', 'Flexible morning & evening batches', 'Classes for all age groups — 5 to 65+'].map(f => (
                   <div key={f} className="flex items-center gap-3">
                     <CheckCircle size={16} className="text-[#D4B26F] shrink-0" />
                     <span className="text-[#5C504E] text-sm font-medium">{f}</span>

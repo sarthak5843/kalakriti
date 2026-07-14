@@ -19,7 +19,11 @@ export default function AdminSettings() {
     instructorBio: '',
     aboutImageUrl: '',
     instructorImageUrl: '',
-    instructorImages: ''
+    instructorImages: '',
+    happyStudents: '500+',
+    artCourses: '20+',
+    yearsExperience: '10+',
+    workshopsConducted: '50+'
   })
   const [newArtUrl, setNewArtUrl] = useState('')
   const [logoFile, setLogoFile] = useState(null)
@@ -50,7 +54,11 @@ export default function AdminSettings() {
           instructorBio: r.data.instructorBio || '',
           aboutImageUrl: r.data.aboutImageUrl || '',
           instructorImageUrl: r.data.instructorImageUrl || '',
-          instructorImages: r.data.instructorImages || ''
+          instructorImages: r.data.instructorImages || '',
+          happyStudents: r.data.happyStudents || '500+',
+          artCourses: r.data.artCourses || '20+',
+          yearsExperience: r.data.yearsExperience || '10+',
+          workshopsConducted: r.data.workshopsConducted || '50+'
         })
         if (r.data.logoUrl) setLogoPreview(r.data.logoUrl)
         if (r.data.qrCodeUrl) setQrPreview(r.data.qrCodeUrl)
@@ -237,6 +245,30 @@ export default function AdminSettings() {
                   <input className="input-field" placeholder="https://youtube.com/..." value={settings.youtubeUrl} onChange={e => setSettings({ ...settings, youtubeUrl: e.target.value })} />
                 </div>
               </div>
+
+              {/* Homepage Stats — editable by admin */}
+              <div className="border-t border-[#EBE3D5]/60 pt-4">
+                <label className="block text-xs font-bold text-[#D4B26F] uppercase tracking-wider mb-3">📊 Homepage Stats (shown on Home &amp; About pages)</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#5C504E] uppercase tracking-wider mb-1">Happy Students</label>
+                    <input className="input-field" placeholder="500+" value={settings.happyStudents} onChange={e => setSettings({ ...settings, happyStudents: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#5C504E] uppercase tracking-wider mb-1">Art Courses</label>
+                    <input className="input-field" placeholder="20+" value={settings.artCourses} onChange={e => setSettings({ ...settings, artCourses: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#5C504E] uppercase tracking-wider mb-1">Years of Experience</label>
+                    <input className="input-field" placeholder="10+" value={settings.yearsExperience} onChange={e => setSettings({ ...settings, yearsExperience: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-bold text-[#5C504E] uppercase tracking-wider mb-1">Workshops Conducted</label>
+                    <input className="input-field" placeholder="50+" value={settings.workshopsConducted} onChange={e => setSettings({ ...settings, workshopsConducted: e.target.value })} />
+                  </div>
+                </div>
+              </div>
+
               <button type="submit" disabled={loading} className="btn-primary py-2.5 px-6 text-sm disabled:opacity-60 cursor-pointer">
                 {loading ? 'Saving...' : 'Save Studio Details'}
               </button>
