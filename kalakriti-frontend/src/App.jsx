@@ -17,6 +17,7 @@ import Testimonials from './pages/Testimonials'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import StudioServices from './pages/StudioServices'
 
 import AdminLogin from './pages/admin/AdminLogin'
 import AdminDashboard from './pages/admin/AdminDashboard'
@@ -82,6 +83,7 @@ export default function App() {
           <Route path="/testimonials" element={<PublicLayout><Testimonials /></PublicLayout>} />
           <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
           <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
+          <Route path="/services" element={<PublicLayout><StudioServices /></PublicLayout>} />
 
           {/* User Protected Routes */}
           <Route path="/dashboard" element={
