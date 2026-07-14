@@ -22,19 +22,7 @@ export default function EventDetail() {
 
   const handleBook = async () => {
     if (!isLoggedIn) { navigate('/login'); return }
-    if (event.paid && event.price > 0) {
-      setShowPaymentModal(true)
-    } else {
-      setBooking(true)
-      try {
-        await eventService.book(id)
-        toast.success('Successfully registered for this event! Awaiting admin approval.')
-      } catch (err) {
-        toast.error(err.response?.data?.message || 'Booking failed')
-      } finally {
-        setBooking(false)
-      }
-    }
+    setShowPaymentModal(true)
   }
 
   const submitBookingWithPayment = async (e) => {
@@ -68,8 +56,8 @@ export default function EventDetail() {
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: 'radial-gradient(circle, #C9A84C 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <span className={`text-xs px-3 py-1 rounded-full font-bold mb-4 inline-block uppercase tracking-wider ${event.paid ? 'bg-[#C9A84C]/20 text-[#C9A84C]' : 'bg-green-500/20 text-green-400'}`}>
-            {event.paid ? `₹${event.price?.toLocaleString()}` : 'Free Event'}
+          <span className="text-xs px-3 py-1 rounded-full font-bold mb-4 inline-block uppercase tracking-wider bg-[#C9A84C]/20 text-[#C9A84C]">
+            {event.price > 0 ? `₹${event.price?.toLocaleString()}` : 'Contact for Fees'}
           </span>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{event.title}</h1>
           <div className="flex flex-wrap gap-4 text-purple-200 text-sm">
