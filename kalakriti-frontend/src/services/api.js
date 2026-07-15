@@ -23,7 +23,7 @@ api.interceptors.response.use(
     const status = err.response?.status
     const url = err.config?.url || ''
     // Only auto-logout on 401, and never on auth endpoints themselves
-    if (status === 401 && !url.includes('/auth/')) {
+    if ((status === 401 || status === 403) && !url.includes('/auth/')) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       const isAdminPath = window.location.pathname.startsWith('/admin')
