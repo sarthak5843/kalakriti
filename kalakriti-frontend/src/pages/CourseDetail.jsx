@@ -123,7 +123,7 @@ export default function CourseDetail() {
           {/* Enrollment Card */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-md p-6 sticky top-24 border border-[#EBE3D5]">
-              <div className="text-3xl font-extrabold text-[#704A87] mb-1">₹{course.price?.toLocaleString()}</div>
+              <div className="text-3xl font-extrabold text-[#704A87] mb-1">₹{Number(course.price || 0).toLocaleString()}</div>
               <p className="text-[#5C504E] text-sm mb-6 font-bold uppercase tracking-wider">One-time enrollment fee</p>
               <div className="space-y-3.5 mb-6 text-sm text-[#5C504E] font-medium border-t border-[#EBE3D5]/50 pt-4">
                 {course.durationWeeks && (
@@ -166,7 +166,7 @@ export default function CourseDetail() {
             <form onSubmit={submitEnrollmentWithPayment} className="p-6 space-y-5">
               <div className="text-center bg-white p-4 rounded-xl border border-[#EBE3D5]">
                 <p className="text-xs text-[#5C504E] uppercase tracking-wider font-bold">Amount to Pay</p>
-                <p className="text-3xl font-extrabold text-[#704A87] mt-1">₹{course.price?.toLocaleString()}</p>
+                <p className="text-3xl font-extrabold text-[#704A87] mt-1">₹{Number(course.price || 0).toLocaleString()}</p>
                 <p className="text-[11px] text-[#8F8082] mt-1 font-semibold">Scan the QR code below using any UPI App (GPay, PhonePe, Paytm)</p>
               </div>
 

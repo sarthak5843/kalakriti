@@ -79,7 +79,7 @@ export default function AdminEvents() {
             <div className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-[#2D1B69] text-sm">{ev.title}</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${ev.paid ? 'bg-[#EDE0F8] text-[#6B2D8B]' : 'bg-green-100 text-green-700'}`}>{ev.paid ? `₹${ev.price}` : 'Free'}</span>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-bold bg-[#EDE0F8] text-[#6B2D8B]`}>₹{Number(ev.price || 0).toLocaleString()}</span>
               </div>
               {ev.eventDate && (
                 <p className="text-xs text-[#7B6B8B] flex items-center gap-1 mb-1"><Calendar size={11} /> {new Date(ev.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>

@@ -191,9 +191,7 @@ export default function Courses() {
 
                     <div className="flex justify-between items-center pt-4 border-t border-[#EBE3D5]">
                       <span className="text-[#704A87] font-extrabold text-lg">
-                        {(item.price === 0 || item.price === '0' || !item.price)
-                          ? <span className="text-emerald-600 text-sm font-bold">Contact for Fees</span>
-                          : `₹${Number(item.price).toLocaleString()}`}
+                        ₹{Number(item.price || 0).toLocaleString()}
                       </span>
                       {item._type === 'course' ? (
                         <Link to={`/courses/${item.id}`} className="btn-pink py-2 px-5 text-xs font-bold">

@@ -76,9 +76,7 @@ export default function Events() {
                     </div>
                     <div className="flex justify-between items-center pt-4 border-t border-[#EBE3D5]">
                       <span className="text-[#704A87] font-extrabold text-lg">
-                        {(event.price === 0 || event.price === '0' || !event.price)
-                          ? <span className="text-emerald-600 text-sm font-bold">Contact for Fees</span>
-                          : `₹${Number(event.price).toLocaleString()}`}
+                        ₹{Number(event.price || 0).toLocaleString()}
                       </span>
                       <Link to={`/events/${event.id}`} className="btn-secondary py-2 px-5 text-xs font-bold">
                         Register <ArrowRight size={13} />
