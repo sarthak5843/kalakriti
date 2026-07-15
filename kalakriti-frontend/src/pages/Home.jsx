@@ -27,7 +27,11 @@ export default function Home() {
 
   useEffect(() => {
     courseService.getAll().then(r => setCourses(r.data?.slice(0, 3) || [])).catch(() => {})
-    galleryService.getImages().then(r => setImages(r.data?.slice(0, 6) || [])).catch(() => {})
+    galleryService.getImages().then(r => {
+      const all = r.data || []
+      const shuffled = [...all].sort(() => 0.5 - Math.random())
+      setImages(shuffled.slice(0, 6))
+    }).catch(() => {})
     eventService.getAll().then(r => setEvents(r.data?.slice(0, 3) || [])).catch(() => {})
     testimonialService.getApproved().then(r => setTestimonials(r.data?.slice(0, 3) || [])).catch(() => {})
     siteService.get().then(r => setSiteSettings(r.data)).catch(() => {})
@@ -302,20 +306,20 @@ export default function Home() {
                       ? <img src={event.imageUrl} alt={event.title} className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500" />
                       : <div className="w-full h-full flex items-center justify-center"><Brush size={40} className="text-[#704A87] opacity-25" /></div>
                     }
-                    <span className="absolute top-3 right-3 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider bg-[#D4B26F] text-white shadow-sm">
-                      ₹{Number(event.price || 0).toLocaleString()}
-                    </span>
                   </div>
                   <div className="p-5">
                     <h3 className="font-bold text-[#3E3431] mb-2">{event.title}</h3>
                     <p className="text-[#5C504E] text-sm mb-4 line-clamp-2 leading-relaxed">{event.description}</p>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center pt-2">
                       <span className="text-xs text-[#704A87] font-bold uppercase tracking-wider flex items-center gap-1">
                         <Clock size={12} /> {event.eventDate ? new Date(event.eventDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'TBA'}
                       </span>
-                      <Link to={`/events/${event.id}`} className="text-[#704A87] font-bold text-sm hover:text-[#54316B] transition-colors flex items-center gap-1">
-                        Register <ArrowRight size={13} />
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[#704A87] font-extrabold text-base">₹{Number(event.price || 0).toLocaleString()}</span>
+                        <Link to={`/events/${event.id}`} className="text-[#704A87] font-bold text-sm hover:text-[#54316B] transition-colors flex items-center gap-1">
+                          Register <ArrowRight size={13} />
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
